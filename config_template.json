@@ -1,0 +1,8 @@
+{
+	"prefix":"!",
+	"token":"<BOT TOKEN>",
+	"tavleid":  "<ID OMGANGSSKYLDNERFELTET>",
+	"voiceid": "<ID KAMMERET VOICE KANAL>",
+	"kammerid": "<ID KAMMERET TEKST KANAL>",
+	"diskoid" : "<ID DISKOKYLE>"
+}

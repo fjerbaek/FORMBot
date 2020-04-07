@@ -1,0 +1,6 @@
+class VoiceHandler
+{
+	constructor(client){
+
+	}
+}
