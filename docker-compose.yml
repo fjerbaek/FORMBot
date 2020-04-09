@@ -1,0 +1,17 @@
+version: '2'
+services:
+    formbot:
+        container_name: formbot
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: formbot:latest
+        volumes:
+            - .:/app
+    mongodb:
+        container_name: mongodb
+        image: mongo:latest
+        volumes: 
+            - ./data:/data/db
+        expose:
+            - "27017"

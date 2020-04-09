@@ -1,0 +1,12 @@
+module.exports = {
+	name: '',                        //name of command
+	usage: '',                       //Evnetual parameters needed
+	description: '',                 //Description
+	args: bool,                      //true if arguments are required. Default: false
+        bestonly: bool,                  //true if only BEST are allowed to run. Default: false
+        alias:[a,b,c],                   //List of aliases for command
+	async execute(message, args) {         //Actual command to run. message.channel and message.client are useful 
+            //...
+	}
+};
+
