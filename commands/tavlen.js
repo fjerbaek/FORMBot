@@ -5,32 +5,36 @@ module.exports = {
     description: 'Viser omgangsskyldnerfeltet. Hvis [navn] er givet, vises det hvorvidt pågældende person er på tavlen eller ej',
     usage: '[navn]',
     aliases: ['t'],
-    execute(message, args) {
+    async execute(message, args) {
         const channel = message.channel;
+        //Check tagged user or check user by alias.
         if (args.length === 1) {
-            persons = tavleUtils.findPerson(args[0]);
-            if (persons.length != 0){
-                persons.forEach(username =>{
-                    let potens = tavleUtils.getPotens(username);
-                    channelUtils.sendMessage(channel, args[0]+ " er på tavlen i " + potens + ". potens!");
-                } )
-            } else {
-                channelUtils.sendMessage(channel, args[0] + " er ikke på tavlen.");
+            if (message.mentions.users.size) {
+                tavleUtils.printById(message, message.mentions.users.first().id)
+            } else { 
+                tavleUtils.printByAlias(message, args[0])
             }
+        //Let BEST add and remove people:
+        //TODO: Create Merge function, that allows merging two entries where one has an actual id.
         } else if (args.length === 2 && message.member.roles.cache.some(role => role.name === "BEST")){
-            let person = args[1];
+            let id;
+            let name = args[0];
             if (message.mentions.users.size){
-                let person = message.mentions.users.first().username;
-            }	
+                id = message.mentions.users.first().id;
+                name = message.mentions.members.first().displayName;
+            } else {
 
-            if (args[0] ===	"add"){
-                tavleUtils.add(person);
-            } else if (args[0] === "remove"){
-                tavleUtils.remove(person);
+                //Check if non-tagged name is alias for another id
+                id = await tavleUtils.idFromAlias(args[0]);
+                
             }
-            tavleUtils.update(message.client);
-        } else {
-            tavleUtils.print(channel);
+            if (parseInt(args[1])){
+                tavleUtils.påAfTavlen(message.client, id, args[1], name)
+                channelUtils.sendMessage(channel, "Ændring registeret")
+            } 
+
+         else {
+                channelUtils.reply(channel, "Se #omgangsskyldnerfeltet for aktuel tavlestatus")
         }	
     },
 };

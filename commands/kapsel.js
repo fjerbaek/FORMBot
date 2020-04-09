@@ -10,7 +10,7 @@ module.exports = {
     cooldown: 1,
     aliases: ['k'],
     args: true,
-    execute(message, args) {
+    async execute(message, args) {
         //Only allow throwing caps in #kammeret
         if(!(message.channel.id === kammerid)){
             return channelUtils.reply(message, "lad nu være at svine uden for #kammeret")
@@ -27,7 +27,7 @@ module.exports = {
                 } else { miss(message) }
                 break;
             case "skiltet":
-                if (!skilteUtils.getStatus()){
+                if (! await skilteUtils.isUp()){
                     channelUtils.reply(message, "Skiltet kan ikke falde ned og skal derfor først sættes op igen, før der kan kastes efter det. Se eventuelt \'!help skiltet\'.")
                     break;
                 }

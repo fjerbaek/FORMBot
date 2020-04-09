@@ -1,4 +1,4 @@
-const {kammerid} = require('../config.json')
+const {kammerid} = require('../config.json');
 module.exports = {
 	clear:function(channel, messages) {
 		channel.bulkDelete(messages)	

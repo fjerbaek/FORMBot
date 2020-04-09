@@ -1,6 +1,6 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const {prefix, token, tavleid, voiceid} = require('./config.json');
+const {prefix, token, tavleid, voiceid, dbURL, dbPort} = require('./config.json');
 const channelUtils = require('./utils/channelutils.js');
 const tavleUtils = require('./utils/tavleutils.js');
 const soundUtils = require('./utils/soundutils.js');
@@ -8,6 +8,9 @@ const soundUtils = require('./utils/soundutils.js');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
+
+//const mongoose = require("mongoose");
+//client.dbConnection = await mongoose.connect('mongodb://' + dbURL + ':' + dbPort + '/' + dbName);
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -19,8 +22,11 @@ for (const file of commandFiles) {
 
 
 client.once('ready', () => {
-    console.log('Ready!');
-    connectToVoice();
+    connectToVoice()
+        .then(() => console.log("Successfully connected to voice channel"))
+        .catch("Error connecting to voice channel");
+    
+    console.log('Ready for commands.');
 });
 
 client.login(token);
@@ -92,8 +98,10 @@ client.on('message', message => {
 });
 
 async function connectToVoice(){
-    const voicechannel = await client.channels.fetch(voiceid);
-    client.voiceconnection = await voicechannel.join();
+    const voicechannel = await client.channels.fetch(voiceid)
+        .catch(() => console.log("Could not fetch voice channel"));
+    client.voiceconnection = await voicechannel.join()
+        .catch(() => console.log("Could not connect to voice channel"));
 
 }
 

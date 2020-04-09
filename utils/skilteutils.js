@@ -2,49 +2,60 @@ const channelUtils = require('../utils/channelutils.js');
 const tavleUtils = require('../utils/tavleutils.js')
 const fs = require('fs');
 const config = require('../config.json');
-let skiltet = require('../skilt.json');
-
+const dbHandler = require('../utils/dbhandler.js')
+const Status = require('../models/status.js');
 
 module.exports = {
-	print: print,
-	ned: ned,
-	op: op,
-	getStatus : getStatus
+    print: print,
+    ned: ned,
+    op: op,
+    isUp: isUp,
 }
 
-function print(channel){
-	let msg = "";
-	isAbleToFallDown = skiltet.status;
-	if (isAbleToFallDown) {
-		msg ="Skiltet kan godt falde ned!"
-	} else {
-		msg = "Skiltet kan ikke falde ned, og skal fixes.\n Den sidste der hærgede skiltet er: " + skiltet.last;
-	}
-	channelUtils.sendMessage(channel, msg);
+async function print(channel){ 
+    let skiltet = await getSkiltet().catch(() => dbError());
+    if (skiltet.status.isUp) {
+        channelUtils.sendMessage(channel, "Skiltet kan godt falde ned!")
+    } else {
+        channelUtils.sendMessage(channel, "Skiltet kan ikke falde ned, og skal fixes.\n - Den sidste der hærgede skiltet er: " + skiltet.status.lastDown)
+    }
 }
 
-function ned(message){
-	skiltet.status = false;
-	skiltet.last = message.author.username;
-        tavleUtils.tavlegrund(message, "Du har hærget skiltet.")
-	save();
+async function isUp(){
+    const skiltet = await getSkiltet().catch(() => dbError());
+    return skiltet.status.isUp;
 }
 
-function op(message){
-	if (!skiltet.status) {
-		skiltet.status = true;
-		skiltet.last = "";
-		channelUtils.reply(message, "du sætter skiltet op, så det igen kan falde ned.")
-		save();
-	} else {
-		channelUtils.reply(message, "skiltet er allerede på sin plads.")
-	}
+async function getSkiltet(){
+    const skiltet = await dbHandler.findOne(Status, {"_id":"skiltet"})
+        .catch(() => dbError());
+    return skiltet;
 }
 
-function getStatus(){
-	return skiltet.status;
+async function ned(message){
+    const skiltet = await getSkiltet()
+        .catch(() => dbError());
+    if (!skiltet.status.isUp) {
+        channelUtils.reply("Skiltet er faldet ned i forvejen");
+    } else {
+        dbHandler.updateOne(Status, {"_id":"skiltet"}, {"status.isUp":false, "status.lastDown":message.member.displayName})
+            .catch(() => dbError());
+        return tavleUtils.tavlegrund(message, "Du har hærget skiltet.");
+    }
 }
 
-function save(){
-	fs.writeFileSync("./skilt.json", JSON.stringify(skiltet))
+async function op(message){
+    const skiltet = await getSkiltet()
+        .catch(() => dbError());
+    if (skiltet.status.isUp) {
+        channelUtils.reply(message, " skiltet er allerede på sin plads.");
+    } else {
+        dbHandler.updateOne(Status, {"_id":"skiltet"}, {"status.isUp":true, "lastDown":""})
+            .catch(() => dbError());
+        channelUtils.reply(message, " du hænger skiltet på plads igen.");
+    }
+}
+
+function dbError(){
+    console.log("Error communicating with database.")
 }

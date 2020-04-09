@@ -1,3 +1,4 @@
+const{voiceid} = require('../config.json')
 module.exports = {
     playOnID : playOnID,
     muteall : muteall,

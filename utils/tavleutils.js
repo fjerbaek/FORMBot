@@ -1,81 +1,116 @@
 const channelUtils = require('../utils/channelutils');
 const fs = require('fs');
 const config = require('../config.json');
+const dbHandler = require('../utils/dbhandler')
+const TavleEntry = require('../models/tavlen.js')
 let tavlen = require('../tavlen.json');
 
 
 module.exports = {
-	getPotens: getPotens,
-	getNavn: getNavn,
-	print: print,
-	påAfTavlen: påAfTavlen,
-	tavlegrund: tavlegrund,
-	findPerson: findPerson,
-	add: add,
-	remove: remove,
-	update: update
+    print: print,
+    påAfTavlen: påAfTavlen,
+    tavlegrund: tavlegrund,
+    update: update,
+    idFromAlias: idFromAlias,
+    printById: printById,
+    printByAlias: printByAlias
 }
 
-function getPotens(navn){
-	navn = navn.toLowerCase();
-	return tavlen[navn]? tavlen[navn][1] : 0;
+async function print(channel){
+    const tavleEntries = await getTavleEntries(); 
+    let msg = "";
+    tavleEntries.forEach(entry => {
+        if (entry.potens > 0) {
+            msg += entry.alias
+            msg += (entry.potens > 1) ? "^" + entry.potens + "\t" : "\t";
+        }
+    })
+    if(msg){
+        channelUtils.sendMessage(channel, msg);
+    } else {
+        channelUtils.sendMessage(channel, "Der er ingen på tavlen.")
+    }
 }
 
-function getNavn(message){
-	return message.member.displayName;
-}
+//Changes id's entrance by <delta>. If it does not exist, it will be created.
 
-function print(channel){
-	let msg = "";
-	Object.keys(tavlen).forEach(person => {
-		if (getPotens(person) > 0){
-			msg += tavlen[person][0];
-			msg += (getPotens(person) > 1) ? "^" + getPotens(person) + "\n" : ",  ";
-		}
-	})
-	channelUtils.sendMessage(channel, msg);
-}
-
-function add(person){
-	tavlen[person.toLowerCase()] = [person, getPotens(person) + 1];
-}
-
-function remove(person){
-	tavlen[person.toLowerCase()] = [person, getPotens(person) - 1];
-}
-
-function påAfTavlen(message, delta){
-	const client = message.client;
-	const navn = message.author.username.toLowerCase();
-	console.log(navn + " er kommet på tavlen - Tjek det lige");
-		tavlen[navn] = [getNavn(message), getPotens(navn) + delta];
-	update(client)
-
+async function påAfTavlen(client, id, delta, name=""){
+    if(!name) name = id; //Defaults name to id if none given.
+    const entry = await getById(id);
+    if (entry && (parseInt(entry.potens) + parseInt(delta)) < 1) {
+        console.log("got here");
+        dbHandler.deleteOne(TavleEntry, entry);
+    } else {
+        dbHandler.updateOne(TavleEntry, {_id: id}, {$inc : {potens: delta}, $setOnInsert: {alias:name}}, upsert=true).catch(() => dbError()); //Using upsert to insert document if not created with alias <name>
+    }
+    update(client)
 }
 
 function update(client){
-	fs.writeFileSync("./tavlen.json", JSON.stringify(tavlen))
-	client.channels.fetch(config.tavleid)
-		.then(channel => {
-			channelUtils.clear(channel, 100);
-			print(channel);
-		});
+    client.channels.fetch(config.tavleid)
+        .then(channel => {
+            channelUtils.clear(channel, 100);
+            print(channel);
+        }).catch(() => console.log("Could not update #omgangsskyldnerfeltet"));
 }
 
-function tavlegrund(message, reason){
-	const channel = message.channel;
-	const name = getNavn(message);
-        console.log("Got here")
-	påAfTavlen(message, 1);
-	channelUtils.sendMessage(channel, "**" + name + " på tavlen!**\n Grund: " + reason);
+async function tavlegrund(message, reason){
+    const id = message.author.id;
+    const entry = await getById(id)
+        .catch(() => dbError());
+    const name = message.member.displayName;
+    påAfTavlen(message.client, id, 1, name);
+    channelUtils.sendMessage(message.channel, "**" + name + " på tavlen!**\n Grund: " + reason);
+    console.log(name + " (" + id + ") er kommet på tavlen for " + reason);
 }
 
-function findPerson(displayname){
-	ret = [];
-	Object.keys(tavlen).forEach(obj => {
-		if (obj.toLowerCase() === displayname.toLowerCase() || tavlen[obj][0].toLowerCase() === displayname.toLowerCase()){
-			ret.push(obj)
-		}
-	})
-	return ret;
+async function getTavleEntries(){
+    return await dbHandler.find(TavleEntry, {})
+}
+
+async function getById(id) {
+    return await dbHandler.findOne(TavleEntry, {"_id":id}).catch(() => dbError());
+};
+
+async function getByAlias(alias) {
+    const regAlias = new RegExp("^" + alias + "$", "i") //Make case insensitive match.
+    const entries = await dbHandler.find(TavleEntry, {"alias":regAlias})
+        .catch(() => dbError());
+    return entries;
+}
+
+//Returns corresponding id to alias. If no such id exists, it returns alias.
+async function idFromAlias(alias) {
+    const id = await getByAlias(alias)
+        .catch(() => dbError());
+    return id.length ? id[0]._id : alias
+}
+
+
+async function printById(message, id){
+    const entry = await getById(id).catch(() => dbError())
+    if (entry){
+        channelUtils.sendMessage(message.channel, entry.alias + " er på tavlen i " + entry.potens + ". potens.")
+    } else {
+        channelUtils.sendMessage(message.channel, "<@" + id + "> er ikke på tavlen.")
+    }
+}
+
+async function printByAlias(message, alias){
+    const entries = await getByAlias(alias).catch(() => dbError());
+    let msg;
+    if (!entries.length){
+        msg = alias + " er ikke på tavlen";
+    }  else if (entries.length == 1) {
+        msg = entries[0].alias + " er på tavlen i " + entries[0].potens + ". potens.";
+    } else {
+        entries.forEach(entry => {
+            msg += entry.alias + "(id: " + entry._id + ") er på tavlen i " + entry.potens + ". potens.\n"
+        })
+    } 
+    channelUtils.sendMessage(message.channel, msg)
+}
+
+function dbError(){
+    console.log("Error communicating with Tavleentry db.")
 }
