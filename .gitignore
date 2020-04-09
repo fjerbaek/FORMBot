@@ -3,5 +3,6 @@ package-lock.json
 /node_modules
 tavlen.json
 *.backup
+/data
 
 

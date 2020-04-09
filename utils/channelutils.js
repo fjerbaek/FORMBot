@@ -15,8 +15,9 @@ module.exports = {
 	}
 }
 
+//Makes TÅGEKAMMERET uppercase, and replaces sigmas by S if on #Kammeret
 function sanitize(channel, text){
-	text = text.replace(/TÅGEKAMMER/i, "TÅGEKAMMER");
+	text = text.replace(/T(Å|AA)GEKAMMER/i, "TÅGEKAMMER");
 	if (channel.id === kammerid){
 		text = text.replace(/(Σ|∑|𝚺|𝛴|𝜮|𝞢|⅀)/,"S");
 	}
