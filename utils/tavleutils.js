@@ -3,7 +3,6 @@ const fs = require('fs');
 const config = require('../config.json');
 const dbHandler = require('../utils/dbhandler')
 const TavleEntry = require('../models/tavlen.js')
-let tavlen = require('../tavlen.json');
 
 
 module.exports = {
@@ -16,6 +15,7 @@ module.exports = {
     printByAlias: printByAlias
 }
 
+//Prints content of omgangsskyldnerfeltet
 async function print(channel){
     const tavleEntries = await getTavleEntries(); 
     let msg = "";
@@ -33,16 +33,19 @@ async function print(channel){
 }
 
 //Changes id's entrance by <delta>. If it does not exist, it will be created.
-
 async function påAfTavlen(client, id, delta, name=""){
     if(!name) name = id; //Defaults name to id if none given.
     const entry = await getById(id);
+    
+    //If the person already exists, and the exponent drops below 1, delete the entry.
     if (entry && (parseInt(entry.potens) + parseInt(delta)) < 1) {
-        console.log("got here");
         dbHandler.deleteOne(TavleEntry, entry);
-    } else {
-        dbHandler.updateOne(TavleEntry, {_id: id}, {$inc : {potens: delta}, $setOnInsert: {alias:name}}, upsert=true).catch(() => dbError()); //Using upsert to insert document if not created with alias <name>
+    } 
+    //Otherwise update/insert  
+    else {
+        dbHandler.updateOne(TavleEntry, {_id: id}, {$inc : {potens: delta}, $setOnInsert: {alias:name}}, upsert=true).catch(() => dbError()); 
     }
+    //Update relevant channels
     update(client)
 }
 
@@ -65,7 +68,7 @@ async function tavlegrund(message, reason){
 }
 
 async function getTavleEntries(){
-    return await dbHandler.find(TavleEntry, {})
+    return await dbHandler.find(TavleEntry, {}).catch(() => dbError())
 }
 
 async function getById(id) {

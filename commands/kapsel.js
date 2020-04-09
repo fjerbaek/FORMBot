@@ -15,6 +15,7 @@ module.exports = {
         if(!(message.channel.id === kammerid)){
             return channelUtils.reply(message, "lad nu være at svine uden for #kammeret")
         }
+        //Switch on different targets.
         switch(args[0]){
             case "klokken":
                 if (isHit(0.4)) {
@@ -36,6 +37,7 @@ module.exports = {
                 } else { miss(message) }
                 break;	
             default:  
+                //If another person has been mentioned
                 if(message.mentions.users.first()){
                     target = message.mentions.users.first().id;
                     if (isHit(0.7)){
@@ -49,6 +51,11 @@ module.exports = {
 
     }
 };
+
+
+function isHit(prob){
+    return (Math.random() < prob);
+}
 
 function hitKlokke(message){
     channelUtils.reply(message, "du rammer klokken!")
@@ -85,7 +92,4 @@ function hitPerson(target, message){
     }
 }
 
-function isHit(prob){
-    return (Math.random() < prob);
-}
 

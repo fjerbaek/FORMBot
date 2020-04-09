@@ -14,8 +14,8 @@ module.exports = {
             } else { 
                 tavleUtils.printByAlias(message, args[0])
             }
-        //Let BEST add and remove people:
-        //TODO: Create Merge function, that allows merging two entries where one has an actual id.
+            //Let BEST add and remove people:
+            //TODO: Create Merge function, that allows merging two entries where one has an actual id.
         } else if (args.length === 2 && message.member.roles.cache.some(role => role.name === "BEST")){
             let id;
             let name = args[0];
@@ -26,15 +26,18 @@ module.exports = {
 
                 //Check if non-tagged name is alias for another id
                 id = await tavleUtils.idFromAlias(args[0]);
-                
+
             }
             if (parseInt(args[1])){
                 tavleUtils.påAfTavlen(message.client, id, args[1], name)
                 channelUtils.sendMessage(channel, "Ændring registeret")
             } 
+        }
 
-         else {
-                channelUtils.reply(channel, "Se #omgangsskyldnerfeltet for aktuel tavlestatus")
-        }	
-    },
+        else {
+            channelUtils.sendMessage(channel, "Se #omgangsskyldnerfeltet for aktuel tavlestatus")
+        }
+
+
+    }
 };

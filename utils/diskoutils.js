@@ -1,74 +1,74 @@
 const channelUtils = require('../utils/channelutils');
 const fs = require('fs');
 const config = require('../config.json');
-let disko = require('../disko.json');
-
-
+const dbHandler = require('../utils/dbhandler');
+const Klandring = require('../models/klandring.js');
 
 module.exports = {
-	print: print,
-	add: add,
-	remove: remove,
-	update: update
+    print: print,
+    addRemoveKlandring: addRemoveKlandring,
+    update: update
+.js}
+
+//Prints content of diskokylen
+async function print(channel){
+    const klandringer = await getKlandringer(); 
+    let msg = "";
+    klandringer.forEach(klandring => {
+        msg += klandring.klandret + "(" + klandring.klandrer + ")";
+        msg += (klandring.potens > 1) ? "^" + klandring.potens + "\t": "\t";
+    })
+    if(msg){
+        channelUtils.sendMessage(channel, msg)
+    } else {
+        channelUtils.sendMessage(channel, "Der er ingen klandringer.")
+    }
 }
 
-
-function print(channel){
-	let msg = "";
-	klandringer = disko.klandringer;
-	for (klandring in klandringer){
-		msg += klandringer[klandring].klandret + "(" + klandringer[klandring].klandrer + ")";
-		msg += (klandringer[klandring].potens > 1) ? "^"+klandringer[klandring].potens : "";
-		msg += "\n"
-	}
-	channelUtils.sendMessage(channel, msg);
+//Fetches all klandringer from db.
+async function getKlandringer(){
+    const klandringer = await dbHandler.find(Klandring, {}).catch(err => dbError())
+    return klandringer;
 }
 
-function add(klandrer, klandret){
-	duplicate = false;
-	disko.klandringer.forEach(klandring => {
-		if(klandring.klandrer.toLowerCase() === klandrer.toLowerCase() && klandring.klandret.toLowerCase() === klandret.toLowerCase()){
-			klandring.potens += 1;
-			duplicate = true;
-		}
-	});
-	if (!duplicate){
-		disko.klandringer.push({"klandrer":klandrer, "klandret":klandret, "potens":1});
-	}
-	fs.writeFileSync("./disko.json", JSON.stringify(disko))
+//Returns klandring on <klandret> by <klandrer>. Case insensitive.
+async function getKlandring(klandrer, klandret){
+    const regKlandrer = new RegExp("^" + klandrer + "$","i");
+    const regKlandret = new RegExp("^" + klandret + "$","i");
+    return await dbHandler.findOne(Klandring, {"klandrer": regKlandrer, "klandret":regKlandret})
+        .catch(err => console.log(err));
 }
 
-function remove(klandrer, klandret){
-	exists = false;
-	disko.klandringer.forEach(klandring => {
-	if(klandring.klandrer.toLowerCase() === klandrer.toLowerCase() && klandring.klandret.toLowerCase() === klandret.toLowerCase()){
-			if (klandring.potens > 1){
-				klandring.potens -= 1;
-			} else {
-				index = disko.klandringer.indexOf(klandring);
-				if(index > -1){
-					disko.klandringer.splice(index, 1);
-				}
-			}
-			exists = true;
-		}
+//Adds (or removes) <delta> klandringer on <klandret> by <klandrer>. 
+async function addRemoveKlandring(message, klandrer, klandret, delta){
+    const klandring = await getKlandring(klandrer, klandret).catch((err) => console.log("Huh?" + err));
 
-	});
-	return exists;
+    //If klandring already exists, and we now get an exponent below 1, then delete it.
+    if (klandring && (parseInt(klandring.potens) + parseInt(delta)) < 1) {
+        dbHandler.deleteOne(Klandring, klandring);
+    }
+
+    //Otherwise update or insert
+    else if (klandring) {
+        dbHandler.updateOne(Klandring, {"klandrer":klandrer, "klandret": klandret}, {$inc : {potens: delta}});
+    } else if (delta > 0){
+        dbHandler.insertOne(Klandring, {"klandrer":klandrer, "klandret": klandret, potens: delta});
+    } else {
+        //Klandring to remove didnt exist
+        channelUtils.reply(message, "Klandringen eksisterer ikke");;
+    }
+    //Update relevant channels:
+    update(message.client);
 }
-
-//function påAfTavlen(navn, delta, client){
-	//console.log(navn + " er kommet på tavlen - Tjek det lige.");
-		//tavlen[navn] = [getNavn(navn), getPotens(navn) + delta];
-	//fs.writeFileSync("./tavlen.json", JSON.stringify(tavlen))
-	//update(client)
-
-//}
 
 function update(client){
-	client.channels.fetch(config.diskoid)
-		.then(channel => {
-			channelUtils.clear(channel, 100);
-			print(channel);
-		});
+    client.channels.fetch(config.diskoid)
+        .then(channel => {
+            channelUtils.clear(channel, 100);
+            print(channel);
+        }).catch(() => console.log("Could not update diskokylen"));
+}
+
+function dbError(){
+    console.log("Error communicating with klandring db")
 }
