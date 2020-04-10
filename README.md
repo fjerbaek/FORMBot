@@ -26,6 +26,6 @@ To run this bot do either of the follwing:
 - Run `docker-compose exec mongodb mongo < dbsetup.js` (Only on first run)
 - Run `docker-compose down`  to stop the bot
 
-# Nodemon configuration
+### Nodemon configuration
 If using nodemon (The docker setup does so), you can setup [nodemon.json](./nodemon.json) to watch files and automatically reload them on save.
 To do so, delete the line `"ignore":"[*]"` and add files/paths to watch to `watch`.
