@@ -35,6 +35,7 @@ module.exports = {
         }
 
         else {
+
             channelUtils.sendMessage(channel, "Se #omgangsskyldnerfeltet for aktuel tavlestatus")
         }
 

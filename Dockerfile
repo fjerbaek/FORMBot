@@ -1,5 +1,6 @@
 FROM node
 COPY . /app
 WORKDIR /app
+RUN npm install nodemon -g
 RUN npm install
-CMD node bot.js
+CMD ["nodemon", "bot.js"]

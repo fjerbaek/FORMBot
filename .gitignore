@@ -1,8 +1,6 @@
 config.json
-package-lock.json
-/node_modules
-tavlen.json
+node_modules/
 *.backup
-/data
+data/
 
 

@@ -8,6 +8,10 @@ services:
         image: formbot:latest
         volumes:
             - .:/app
+        stdin_open: true
+        tty: true
+        depends_on:
+            - mongodb
     mongodb:
         container_name: mongodb
         image: mongo:latest
