@@ -1,4 +1,5 @@
 config.json
+nodemon.json
 node_modules/
 *.backup
 data/
