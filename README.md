@@ -7,7 +7,7 @@ To get understanding of the project, please follow [this guide] (https://discord
 - [Node.js](https://nodejs.org/)
 - [Mongodb](https://www.mongodb.com)
 
-#Usage
+# Usage
 To run this bot do either of the follwing:
 
 ### Without docker and docker-compose
