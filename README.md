@@ -1,7 +1,7 @@
 # FORMBot
 A discord bot for TÅGEKAMMERETs discord channel.
 Created with [Discord.js](https://discord.js.org/#/)
-To get understanding of the project, please follow [this guide] (https://discordjs.guide/)
+To get understanding of the project, please follow [this guide](https://discordjs.guide/)
 
 # Dependencies
 - [Node.js](https://nodejs.org/)
