@@ -8,10 +8,12 @@ const skraldeUtils = require('./utils/skraldeutils.js');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
+const timers = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 
-//const mongoose = require("mongoose");
-//client.dbConnection = await mongoose.connect('mongodb://' + dbURL + ':' + dbPort + '/' + dbName);
+let isAwake = true;
+const sleepTimeout = 60*60*1000; //Time (in ms) before bot falls asleep if no commands received
+const sleepLocations = ["Rådet", "Handikappen", "Kammeret", "Rampen"] //Locations for bot to sleep
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -30,6 +32,9 @@ client.once('ready', () => {
     console.log('Ready for commands.');
 });
 
+//Checks once a minute if the bot should fall asleep
+setInterval(checkSleep, 60000)
+
 client.login(token);
 
 client.on('message', message => {
@@ -45,8 +50,15 @@ client.on('message', message => {
             }
         })
     }
+    
+    
     //break early if not a command or message is from a bot.
     if (!message.content.startsWith(prefix) || message.author.bot) return;
+
+    client.user.setActivity("");
+    timers.set("last", Date.now());
+    isAwake = true;
+
     const args = message.content.slice(prefix.length).split(/ +/);
     const commandName = args.shift().toLowerCase();
     const channel = message.channel;
@@ -73,14 +85,13 @@ client.on('message', message => {
     }
 
 
-    //Manage cooldowns:
-
+    //Manage cooldowns and timers
+    const now = Date.now();
     //If command not in cooldown collectoin, add it.
     if (!cooldowns.has(command.name)) {
         cooldowns.set(command.name, new Discord.Collection());
     }
 
-    const now = Date.now();
     const timestamps = cooldowns.get(command.name);
 
     //set default cooldown of 1 second.
@@ -129,6 +140,14 @@ function ruleCheck(message){
     }
     if(tksmåt){
         tavleUtils.tavlegrund(message, "TÅGEKAMMERET skal skrives med lutter versaler");
+    }
+}
+
+function checkSleep(){
+    if (Date.now() - timers.get("last") >= sleepTimeout && isAwake){
+        let location = sleepLocations[Math.floor(Math.random()*sleepLocations.length)]
+        client.user.setActivity("Sover på " + location, "");
+        isAwake = false;
     }
 }
 
