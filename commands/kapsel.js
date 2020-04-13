@@ -2,6 +2,7 @@ const channelUtils = require('../utils/channelutils.js');
 const skilteUtils = require('../utils/skilteutils.js');
 const soundUtils = require('../utils/soundutils.js');
 const tavleUtils = require('../utils/tavleutils.js');
+const skraldeUtils = require('../utils/skraldeutils.js');
 const {voiceid, kammerid} = require('../config.json');
 module.exports = {
     name: 'kapsel',
@@ -36,6 +37,11 @@ module.exports = {
                     hitSkiltet(message);	
                 } else { miss(message) }
                 break;	
+            case "skraldespanden":
+                if (isHit(0.7)) {
+                    hitSkraldespanden(message);
+                } else { miss(message) }
+                break;
             default:  
                 //If another person has been mentioned
                 if(message.mentions.users.first()){
@@ -82,6 +88,17 @@ function hitSkiltet(message){
 
         soundUtils.play(message.client.voiceconnection, "./sound/skilthit.mp3")
     }
+}
+
+function hitSkraldespanden(message){
+    skraldeUtils.isFull().then(isFull => {
+        if (isFull){
+            channelUtils.reply(message, "Du rammer skraldespanden, men da den er fyldt, falder kapslen på gulvet.")
+        } else {
+            channelUtils.reply(message, "Du rammer skraldespanden!");
+            skraldeUtils.kapselHit()
+        }
+    })
 }
 
 function hitPerson(target, message){

@@ -8,12 +8,13 @@ module.exports = {
     print: print,
     isFull: isFull,
     sendToFORM: sendToFORM,
-    empty: empty
+    empty: empty,
+    kapselHit: kapselHit
 }
 
 async function print(channel){ 
     let skraldespanden = await getSkraldespanden().catch(() => dbError());
-    channelUtils.sendMessage(channel, "Skraldespanden er " + skraldespanden.status.filledAmount * 100 / capacity + "% fyldt.");
+    channelUtils.sendMessage(channel, "Skraldespanden er " + Math.min(100,skraldespanden.status.filledAmount * 100 / capacity) + "% fyldt.");
     
 }
 
@@ -25,6 +26,11 @@ async function isFull(){
 async function getSkraldespanden(){
     const skraldespanden = await dbHandler.findOne(Status, {"_id":"skraldespanden"}).catch(() => dbError());
     return skraldespanden;
+}
+
+async function kapselHit(){
+    const skraldespanden = await getSkraldespanden().catch(() => dbError());
+    dbHandler.updateOne(Status, skraldespanden, {$inc : {"status.filledAmount": 100}}).catch(() => dbError());
 }
 
 async function sendToFORM(message){
