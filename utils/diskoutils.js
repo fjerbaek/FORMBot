@@ -45,18 +45,19 @@ async function addRemoveKlandring(message, klandrer, klandret, delta){
 
     //If klandring already exists, and we now get an exponent below 1, then delete it.
     if (klandring && (parseInt(klandring.potens) + parseInt(delta)) < 1) {
-        dbHandler.deleteOne(Klandring, klandring);
+        await dbHandler.deleteOne(Klandring, klandring);
     }
 
     //Otherwise update or insert
     else if (klandring) {
-        dbHandler.updateOne(Klandring, {"klandrer":klandrer, "klandret": klandret}, {$inc : {potens: delta}});
+        await dbHandler.updateOne(Klandring, {"klandrer":klandrer, "klandret": klandret}, {$inc : {potens: delta}});
     } else if (delta > 0){
-        dbHandler.insertOne(Klandring, {"klandrer":klandrer, "klandret": klandret, potens: delta});
+        await dbHandler.insertOne(Klandring, {"klandrer":klandrer, "klandret": klandret, potens: delta});
     } else {
         //Klandring to remove didnt exist
         channelUtils.reply(message, "Klandringen eksisterer ikke");;
     }
+    channelUtils.reply(message, "Ændring registreret")
     //Update relevant channels:
     update(message.client);
 }
