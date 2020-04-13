@@ -15,6 +15,7 @@ module.exports = {
             skraldeUtils.print(channel);
         } else if (args[0] === "tøm") {
             skraldeUtils.empty(message.client);
+            channelUtils.sendMessage(channel, "Du tømmer skraldespanden! God stil!");
         }
     }
 };

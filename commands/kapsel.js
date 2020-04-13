@@ -98,6 +98,7 @@ function hitSkraldespanden(message){
             channelUtils.reply(message, "Du rammer skraldespanden!");
             skraldeUtils.kapselHit()
         }
+    soundUtils.play(message.client.voiceconnection, "./sound/trashcap.mp3")
     })
 }
 

@@ -17,7 +17,7 @@ module.exports = {
 };
 
 function ringKlokke(message){
-    soundUtils.play(message.client.soundconnection, "./sound/klokke.mp3");
+    soundUtils.play(message.client.voiceconnection, "./sound/klokke.mp3");
     channelUtils.sendMessage(message.channel, message.member.displayName + " ringede med klokken!")
 }
 
