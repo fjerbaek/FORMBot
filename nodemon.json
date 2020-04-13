@@ -1,6 +1,5 @@
 {
     "verbose": true,
-    "ignore": ["*"],
     "watch" : ["commands/*.js", "utils/*.js"]
 }
 

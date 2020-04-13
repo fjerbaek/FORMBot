@@ -1,9 +1,10 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const {prefix, token, tavleid, voiceid, dbURL, dbPort} = require('./config.json');
+const {prefix, token, tavleid, voiceid, skraldeid, dbURL, dbPort} = require('./config.json');
 const channelUtils = require('./utils/channelutils.js');
 const tavleUtils = require('./utils/tavleutils.js');
 const soundUtils = require('./utils/soundutils.js');
+const skraldeUtils = require('./utils/skraldeutils.js');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -34,6 +35,16 @@ client.login(token);
 client.on('message', message => {
     ruleCheck(message);
 
+    //If sent to forms brevkasse and author is not bot, make sure there is room for it
+    if(message.channel.id === skraldeid && !message.author.bot){
+        skraldeUtils.isFull().then(isFull => {
+            if (isFull){
+                message.delete();
+            } else {
+                skraldeUtils.sendToFORM(message);
+            }
+        })
+    }
     //break early if not a command or message is from a bot.
     if (!message.content.startsWith(prefix) || message.author.bot) return;
     const args = message.content.slice(prefix.length).split(/ +/);
