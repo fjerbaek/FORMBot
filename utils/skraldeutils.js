@@ -2,7 +2,7 @@ const channelUtils = require('../utils/channelutils.js');
 const config = require('../config.json');
 const dbHandler = require('../utils/dbhandler.js')
 const Status = require('../models/status.js');
-const capacity = 1000;
+const capacity = 2500;
 
 module.exports = {
     print: print,
