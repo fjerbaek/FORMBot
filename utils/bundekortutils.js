@@ -69,7 +69,7 @@ async function sendNew(message, recipient, text){
     const bundekort = {"_id":id, "authorid":message.author.id, "text":text};
     console.log("Bundekort: " + bundekort)
     addCard(bundekort, recipient);
-    channelUtils.reply(message, "Bundekortet er sendt!")
+    channelUtils.reply(message, "Bundekortet (id: " + bundekort._id + ")er sendt!")
 }
 
 async function useCard(message, id){
@@ -112,11 +112,6 @@ async function sendById(message, recipient, cardid){
         channelUtils.reply(message, "Bundekortet på <@" + card.authorid + "> er blevet sendt!" )
     }
     console.log(card);
-    //if (!cards){
-    //return channelUtils.reply(message, "Kunne ikke finde bundekortet. Er du sikker på, du har angivet korrekt id?");
-    //} else {
-    //card = cards.card
-    //}
 }
 
 async function isUp(){
@@ -128,30 +123,6 @@ async function getSkiltet(){
     const skiltet = await dbHandler.findOne(Status, {"_id":"skiltet"})
         .catch(() => dbError());
     return skiltet;
-}
-
-async function ned(message){
-    const skiltet = await getSkiltet()
-        .catch(() => dbError());
-    if (!skiltet.status.isUp) {
-        channelUtils.reply("Skiltet er faldet ned i forvejen");
-    } else {
-        dbHandler.updateOne(Status, {"_id":"skiltet"}, {"status.isUp":false, "status.lastDown":message.member.displayName})
-            .catch(() => dbError());
-        return tavleUtils.tavlegrund(message, "Du har hærget skiltet.");
-    }
-}
-
-async function op(message){
-    const skiltet = await getSkiltet()
-        .catch(() => dbError());
-    if (skiltet.status.isUp) {
-        channelUtils.reply(message, " skiltet er allerede på sin plads.");
-    } else {
-        dbHandler.updateOne(Status, {"_id":"skiltet"}, {"status.isUp":true, "lastDown":""})
-            .catch(() => dbError());
-        channelUtils.reply(message, " du hænger skiltet på plads igen.");
-    }
 }
 
 function dbError(){
