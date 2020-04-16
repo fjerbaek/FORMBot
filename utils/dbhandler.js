@@ -5,6 +5,7 @@ mongoose.connect("mongodb://" + dbURL + ":" + dbPort + "/" + dbName, {useNewUrlP
 module.exports = {
     find:find,
     findOne:findOne,
+    findOneAndUpdate: findOneAndUpdate,
     updateOne:updateOne,
     deleteOne: deleteOne,
     insertOne: insertOne
@@ -29,6 +30,12 @@ async function updateOne(model, filter={}, replace={}, upsert=false){
     return await model.updateOne(filter, replace, {'upsert': upsert}).exec().catch(err => console.log(err))
 }
 
+//Atomically finds a document and updates it. Returns the updated document.
+async function findOneAndUpdate(model, filter={}, replace={}, upsert=false){
+    return await model.findOneAndUpdate(filter, replace, {'upsert': upsert, 'new': true}).exec().catch(err => console.log(err))
+}
+
+
 //Deletes the given entry of type model
 async function deleteOne(model, entry){
     return await model.deleteOne({_id:entry._id}).exec().catch(err => console.log(err));
@@ -36,5 +43,5 @@ async function deleteOne(model, entry){
 
 //Inserts a single document of type model.
 async function insertOne(model, doc){
-    model.create(doc).catch(err => console.log(err));
+    return model.create(doc).catch(err => console.log(err));
 }

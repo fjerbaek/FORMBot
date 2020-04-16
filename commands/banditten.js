@@ -4,6 +4,7 @@ const {voiceid, kammerid, formid} = require('../config.json');
 module.exports = {
     name: 'banditten',
     usage: '',
+    aliases: 'b',
     description: 'Ryk i banditten!',
     execute(message, args) {
         if(!(message.channel.id === kammerid)){

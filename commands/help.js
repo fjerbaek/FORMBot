@@ -14,15 +14,7 @@ module.exports = {
             data.push("Kommandoer:");
             data.push(commands.filter(cmd => !cmd.hidden).map(command => command.name).join(', '));
             data.push("\nSkriv " + prefix + "help [kommando] for at få information om en specifik kommando!");
-            return message.author.send(data, { split: true })
-                .then(() => {
-                    if (message.channel.type === 'dm') return;
-                    message.reply("Jeg har sendt dig en DM med alle kommandoer");
-                })
-                .catch(error => {
-                    console.error("Kunne ikke sende DM til " + message.author.tag + '\n', error)
-                    message.reply("Jeg kan ikke sende dig en DM - Har du dem deaktiveret?");
-                });
+            return channelUtils.dm(message, data, "jeg har sendt dig en DM med alle kommandoer");
         }
         const name = args[0].toLowerCase();
 
