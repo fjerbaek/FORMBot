@@ -4,7 +4,7 @@ const {kammerid} = require('../config.json');
 module.exports = {
     name: 'bundekort',
     aliases: ['bk'],
-    description: 'Viser dig alle dine bundekort i din "pung".\nGives [use <id>] bruger du bundekortet med id <id>.\nGives [new <tekst>], opretter du et bundekort på dig selv med teksten <tekst>, der placeres i din egen pung.\nGives [send @user <id>] sendes bundekortet med id <id> til den taggede bruger.\nGives [sendnew @user <text>] sendes et nyt bundekort til den taggede bruger med teksten <tekst>\n gives [ok <id>]',
+    description: 'Viser dig alle dine bundekort i din "pung".\nGives [use <id>] bruger du bundekortet med id <id>.\nGives [new <tekst>], opretter du et bundekort på dig selv med teksten <tekst>, der placeres i din egen pung.\nGives [send @user <id>] sendes bundekortet med id <id> til den taggede bruger.\nGives [sendnew @user <text>] sendes et nyt bundekort til den taggede bruger med teksten <tekst>\n Gives [ok <id>] accepteres bundekortet med id <id>',
     //usage: '[(use|ok) <id> <(send @user (<id>| new <text>) | new <]',
     execute(message, args) {
         const channel = message.channel;
