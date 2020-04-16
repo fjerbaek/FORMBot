@@ -6,7 +6,7 @@ module.exports = {
     play : play
 }
 
-function play(voiceConnection, path){
+async function play(voiceConnection, path){
     if (voiceConnection && path) voiceConnection.play(path);
 }
 
