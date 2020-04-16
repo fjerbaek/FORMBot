@@ -79,7 +79,7 @@ async function useCard(message, id){
         return channelUtils.reply(message, "Du har ikke pågældende bundekort")
     } else {
         const recipient = card.authorid;
-        const filter = (msg) => (msg.author.id === recipient && (msg.content.toLowerCase().replace(/ /g,'') === "!bundekortok"+card._id || "!bkok"+card._id));
+        const filter = (msg) => (msg.author.id === recipient && (msg.content.toLowerCase().replace(/ /g,'') === "!bundekortok"+card._id || msg.content.toLowerCase().replace(/ /g, '') === "!bkok"+card._id));
         const collector = message.channel.createMessageCollector(filter, { time: 300000 });
         collector.on('collect', m => {
             removeCard(card, message.author.id);
