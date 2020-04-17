@@ -71,7 +71,7 @@ client.on('message', message => {
     //break early if user does not have rights. TODO: Generaliser til forskellige roller.
     if (command.bestonly && !message.member.roles.cache.some(role => role.name === "BEST")){
 
-        channelUtils.reply(message, "du har ikke rettigheder til at anvende denne kommando");
+        return channelUtils.reply(message, "du har ikke rettigheder til at anvende denne kommando");
     }
 
     //If command must have arguments, enforce it:
