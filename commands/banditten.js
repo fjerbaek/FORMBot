@@ -3,8 +3,7 @@ const soundUtils = require('../utils/soundutils.js');
 const {voiceid, kammerid, formid} = require('../config.json');
 module.exports = {
     name: 'banditten',
-    usage: '',
-    aliases: 'b',
+    aliases: ['b'],
     description: 'Ryk i banditten!',
     execute(message, args) {
         if(!(message.channel.id === kammerid)){
