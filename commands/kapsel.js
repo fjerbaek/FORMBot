@@ -103,7 +103,7 @@ function hitSkraldespanden(message){
 }
 
 function hitPerson(target, message){
-    channelUtils.sendMessage(message.channel, "<@"+message.author.id+"> rammer <@"+target+"> med en kapsel!");
+    channelUtils.sendMessage(message.channel, channelUtils.mention(message.author.id) + " rammer " + channelUtils.mention(target) + " med en kapsel!");
     //If target is bot:
     if (target === message.client.user.id) {
         channelUtils.sendMessage(message.channel, "AAAAAAAAV!!!\n Høker!!!\n - bare gi' den til FORM!");	

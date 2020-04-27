@@ -6,6 +6,7 @@ module.exports = {
     sendMessage:sendMessage,
     reply:reply,
     dm:dm,
+    mention:mention,
 }
 
 function reply(message, reply){
@@ -41,4 +42,6 @@ function sanitize(channel, text){
     return text;
 }
 
-
+function mention(id) {
+    return "<@" + id + ">";
+}

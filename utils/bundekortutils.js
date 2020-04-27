@@ -36,7 +36,7 @@ function listCards(wallet){
     let msg = "";
     wallet.cards.forEach(bundekort => {
         msg += "ID: " + bundekort._id + "\n";
-        msg += "Fra <@" + bundekort.authorid + ">:\n";
+        msg += "Fra " + channelUtils.mention(bundekort.authorid) + ":\n";
         msg += bundekort.text + "\n\n";
     })
     return msg
@@ -86,7 +86,7 @@ async function useCard(message, id){
             channelUtils.reply(message, "Bundekortet med id " + card._id + " er nu brugt!");
             collector.stop();
         });
-        channelUtils.sendMessage(message.channel, "<@" + recipient + "> - Du modtager et bundekort med teksten:\n" + card.text + "\n Underskrevet: <@" + card.authorid + ">\n Send \"!bundekort ok " + card._id + "\" inden for 5 minutter for at acceptere.")
+        channelUtils.sendMessage(message.channel, channelUtils.mention(recipient) + " - Du modtager et bundekort med teksten:\n" + card.text + "\n Underskrevet: " + channelsUtils.mention(card.authorid) + "\n Send \"!bundekort ok " + card._id + "\" inden for 5 minutter for at acceptere.")
     }
 }
 
@@ -109,7 +109,7 @@ async function sendById(message, recipient, cardid){
     } else {
         removeCard(card, message.author.id);
         addCard(card, recipient);
-        channelUtils.reply(message, "Bundekortet på <@" + card.authorid + "> er blevet sendt!" )
+        channelUtils.reply(message, "Bundekortet på " + channelUtils.mention(card.authorid) + " er blevet sendt!" )
     }
     console.log(card);
 }

@@ -12,7 +12,7 @@ module.exports = {
         } else if (args.length > 1){
             const klandret = args[1];
             //If no third argument given, assume klandrer is sender of messages.
-            const klandrer = args[2]? args[2] : "<@" + message.author.id + ">";
+            const klandrer = args[2]? args[2] : channelUtils.mention(message.author.id);
 
             if (args[0]==="add"){
                 diskoUtils.addRemoveKlandring(message, klandrer, klandret, 1);
