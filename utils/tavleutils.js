@@ -95,7 +95,7 @@ async function printById(message, id){
     if (entry){
         channelUtils.sendMessage(message.channel, entry.alias + " er på tavlen i " + entry.potens + ". potens.")
     } else {
-        channelUtils.sendMessage(message.channel, channelUtils.mention(id) + " er ikke på tavlen.")
+        channelUtils.sendMention(message.channel, id, " er ikke på tavlen.")
     }
 }
 

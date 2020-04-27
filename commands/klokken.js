@@ -18,6 +18,6 @@ module.exports = {
 
 function ringKlokke(message){
     soundUtils.play(message.client.voiceconnection, "./sound/klokke.mp3");
-    channelUtils.sendMessage(message.channel, channelUtils.mention(message.member.id) + " ringede med klokken!")
+    channelUtils.sendMention(message.channel, message.member.id, " ringede med klokken!")
 }
 
