@@ -17,6 +17,6 @@ module.exports = {
 
 function startPb(message){
     soundUtils.play(message.client.voiceconnection, "./sound/pb.mp3");
-    channelUtils.sendMessage(message.channel, message.member.displayName + " startede en pædagogisk bundecirkel!")
+    channelUtils.sendMessage(message.channel, channelUtils.mention(message.member.id) + " startede en pædagogisk bundecirkel!")
 }
 
