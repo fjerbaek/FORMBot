@@ -16,6 +16,6 @@ module.exports = {
 
 function pullBandit(message){
     soundUtils.play(message.client.voiceconnection, "./sound/banditten.mp3");
-    channelUtils.sendMessage(message.channel, message.member.displayName + " rykkede i banditten")
+    channelUtils.sendMention(message.channel, message.member.id, " rykkede i banditten")
 }
 

@@ -63,7 +63,7 @@ async function tavlegrund(message, reason){
         .catch(() => dbError());
     const name = message.member.displayName;
     påAfTavlen(message.client, id, 1, name);
-    channelUtils.sendMessage(message.channel, "**" + name + " på tavlen!**\n Grund: " + reason);
+    channelUtils.sendMessage(message.channel, "**" + channelUtils.mention(id) + " på tavlen!**\n Grund: " + reason);
     console.log(name + " (" + id + ") er kommet på tavlen for " + reason);
 }
 
@@ -95,7 +95,7 @@ async function printById(message, id){
     if (entry){
         channelUtils.sendMessage(message.channel, entry.alias + " er på tavlen i " + entry.potens + ". potens.")
     } else {
-        channelUtils.sendMessage(message.channel, "<@" + id + "> er ikke på tavlen.")
+        channelUtils.sendMention(message.channel, id, " er ikke på tavlen.")
     }
 }
 

@@ -38,7 +38,7 @@ async function ned(message){
     if (!skiltet.status.isUp) {
         channelUtils.reply("Skiltet er faldet ned i forvejen");
     } else {
-        dbHandler.updateOne(Status, {"_id":"skiltet"}, {"status.isUp":false, "status.lastDown":message.member.displayName})
+        dbHandler.updateOne(Status, {"_id":"skiltet"}, {"status.isUp":false, "status.lastDown":channelUtils.mention(message.member.id)})
             .catch(() => dbError());
         return tavleUtils.tavlegrund(message, "Du har hærget skiltet.");
     }
