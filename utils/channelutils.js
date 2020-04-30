@@ -7,7 +7,7 @@ module.exports = {
     reply:reply,
     dm:dm,
     mention:mention,
-    sendMentionMessage:sendMentionMessage,
+    sendMention:sendMentionMessage,
 }
 
 function reply(message, reply){
