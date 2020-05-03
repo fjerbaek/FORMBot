@@ -8,8 +8,20 @@ module.exports = {
     dm:dm,
     mention:mention,
     sendMention:sendMentionMessage,
+    superscript:superscript
 }
 
+function superscript(n) {
+    const s = n.toString();
+    const digits = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+
+    var res = '';
+    for (let i = 0; i < s.length; i++) {
+        res += digits[s[i]];
+    }
+
+    return res;
+}
 function reply(message, reply){
     reply = sanitize(message.channel, reply);
     message.reply(reply);

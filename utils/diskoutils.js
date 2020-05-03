@@ -10,17 +10,6 @@ module.exports = {
     update: update
 .js}
 
-function superscript(n) {
-    const s = n.toString();
-    const digits = '⁰¹²³⁴⁵⁶⁷⁸⁹';
-
-    var res = '';
-    for (let i = 0; i < s.length; i++) {
-        res += digits[s[i]];
-    }
-
-    return res;
-}
 
 //Prints content of diskokylen
 async function print(channel){
@@ -28,7 +17,7 @@ async function print(channel){
     let msg = "";
     klandringer.forEach(klandring => {
         msg += klandring.klandret + "(" + klandring.klandrer + ")";
-        msg += (klandring.potens > 1) ? superscript(klandring.potens) + "\t": "\t";
+        msg += (klandring.potens > 1) ? channelUtils.superscript(klandring.potens) + "\t": "\t";
     })
     if(msg){
         channelUtils.sendMessage(channel, msg)

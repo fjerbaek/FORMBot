@@ -22,7 +22,7 @@ async function print(channel){
     tavleEntries.forEach(entry => {
         if (entry.potens > 0) {
             msg += entry.alias
-            msg += (entry.potens > 1) ? "^" + entry.potens + "\t" : "\t";
+            msg += (entry.potens > 1) ? channelUtils.superscript(entry.potens) + "\t" : "\t";
         }
     })
     if(msg){
