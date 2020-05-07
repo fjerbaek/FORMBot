@@ -86,7 +86,7 @@ async function useCard(message, id){
             channelUtils.reply(message, "Bundekortet med id " + card._id + " er nu brugt!");
             collector.stop();
         });
-        channelUtils.sendMention(message.channel, recipient, " - Du modtager et bundekort med teksten:\n" + card.text + "\n Underskrevet: " + channelsUtils.mention(card.authorid) + "\n Send \"!bundekort ok " + card._id + "\" inden for 5 minutter for at acceptere.")
+        channelUtils.sendMention(message.channel, recipient, " - Du modtager et bundekort med teksten:\n" + card.text + "\n Underskrevet: " + channelUtils.mention(card.authorid) + "\n Send \"!bundekort ok " + card._id + "\" inden for 5 minutter for at acceptere.")
     }
 }
 
