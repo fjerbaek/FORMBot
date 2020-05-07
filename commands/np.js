@@ -6,7 +6,6 @@ module.exports = {
     description: 'P = NP',
     execute(message, args) {
             channelUtils.reply(message, "Mente du '!p'?")
-        }
     }
 };
 
