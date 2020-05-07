@@ -123,7 +123,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
     if (newMember.channelID === teleid && !newMember.channel.full) {
         soundUtils.play(client.voiceconnection, "./sound/telefon.mp3");
     //If the person responding from kammeret goes back to kammeret.
-    } else if (oldMember.channelID === teleid && newMember.channelID === voiceid && oldMember.channel.full) {
+    } else if (oldMember.channelID === teleid && newMember.channelID === voiceid) {
         soundUtils.play(client.voiceconnection, "./sound/hangup.mp3");
     } else if (oldMember.channelID === teleid) {
         soundUtils.play(client.voiceconnection, "./sound/silence.mp3");
