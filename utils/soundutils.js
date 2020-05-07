@@ -3,11 +3,17 @@ module.exports = {
     playOnID : playOnID,
     muteall : muteall,
     mute : mute,
-    play : play
+    play : play,
+    stop : stop
 }
 
 async function play(voiceConnection, path){
     if (voiceConnection && path) voiceConnection.play(path);
+}
+
+async function stop(voiceConnection){
+    if (voiceConnection) voiceConnection.play("./sound/silence.mp3");
+    console.log("test")
 }
 
 function playOnID(client, id, path) {client.channels.fetch(id).then(channel => playSound(channel, path))};

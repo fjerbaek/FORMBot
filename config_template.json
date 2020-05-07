@@ -6,6 +6,7 @@
 	"kammerid": "<ID KAMMERET TEKST KANAL>",
 	"diskoid" : "<ID DISKOKYLEN>",
         "skraldeid": "<ID SKRALDESPAND>",
+        "teleid": "<ID TELEFON>",
         "dbURL" : "<DB URL - Brug 'mongodb' ved docker-compose>",
         "dbPort" : "<DB PORT - Default: 27017>",
         "dbName" : "<DB Name>"

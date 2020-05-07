@@ -1,6 +1,6 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const {prefix, token, tavleid, voiceid, skraldeid, dbURL, dbPort} = require('./config.json');
+const {prefix, token, tavleid, voiceid, skraldeid, teleid, dbURL, dbPort} = require('./config.json');
 const channelUtils = require('./utils/channelutils.js');
 const tavleUtils = require('./utils/tavleutils.js');
 const soundUtils = require('./utils/soundutils.js');
@@ -116,6 +116,17 @@ client.on('message', message => {
         console.error(error);
         channelUtils.reply(message, "kommandoen eksisterer ikke")
 
+    }
+});
+client.on('voiceStateUpdate', (oldMember, newMember) => {
+    //If someone calls #kammeret
+    if (newMember.channelID === teleid && !newMember.channel.full) {
+        soundUtils.play(client.voiceconnection, "./sound/telefon.mp3");
+    //If the person responding from kammeret goes back to kammeret.
+    } else if (oldMember.channelID === teleid && newMember.channelID === voiceid && oldMember.channel.full) {
+        soundUtils.play(client.voiceconnection, "./sound/hangup.mp3");
+    } else if (oldMember.channelID === teleid) {
+        soundUtils.play(client.voiceconnection, "./sound/silence.mp3");
     }
 });
 
